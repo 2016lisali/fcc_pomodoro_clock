@@ -1,10 +1,9 @@
 // rafce 
-const BreakLength = (props) => {
-  const {
-    decrementBreak,
-    breaktime,
-    incrementBreak
-  } = props
+const BreakLength = ({
+  decrementBreak,
+  breaktime,
+  incrementBreak
+  }) => {
   return (
     <div className="breakLength col mx-5">
       <h3 id="break-label">Break Length</h3>

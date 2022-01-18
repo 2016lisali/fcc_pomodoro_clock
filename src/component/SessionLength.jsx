@@ -1,6 +1,4 @@
-function SessionLength(props) {
-
-  const { decrementSession, sessionTime, incrementSession } = props
+function SessionLength({ decrementSession, sessionTime, incrementSession }) {
   
   return (
     <div className="sessionLength col px-5">

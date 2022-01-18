@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BreakLength from "./component/BreakLength"
 import SessionLength from "./component/SessionLength"
 import TimeLeft from "./component/TimeLeft"
@@ -9,89 +9,111 @@ import './App.css';
 momentDurationFormatSetup(moment)
 
 function App() {
-  const [breakTime, setBreakTime] = useState(5)
+  const audioElement = useRef(null)
+  const [breakTime, setBreakTime] = useState(1)
   const [sessionTime, setSessionTime] = useState(25)
-  const [timeLeft, setTimeLeft] = useState(sessionTime*60)
+  const [timeLeft, setTimeLeft] = useState(5 * 60)
   const [intervalId, setIntervalId] = useState(null)
-  const [playOrStop, setPlayOrStop] = useState("Start")
+  const [startOrStop, setStartOrStop] = useState("Start")
   const [currentSessionType, setCurrentSessionType] = useState("Session")
   const formattedTimeLeft = moment.duration(timeLeft, 's').format('mm:ss', { trim: false })
-  
+
   // change timeleft whenever sessionlength changes
   useEffect(() => {
-    setTimeLeft(sessionTime*60)}, [sessionTime]
+    setTimeLeft(sessionTime * 60)
+  }, [sessionTime]
   )
-  
-  const startClock = () => {
-    if (intervalId != null) {
-      // if intervalId != null means the clock is started
-      // stop the timer, clearInterval
-      clearInterval(intervalId)
-      setIntervalId(null)
-      setPlayOrStop("Start")
-    } else {
-      // if intervalId === null, which means not start, decrement timeleft by one every second
-      const newIntervalId = setInterval(()=>{
-        setTimeLeft(prevTimeLeft => {
-          if(prevTimeLeft >=1) {
-            return prevTimeLeft - 1
-          }
-          if (currentSessionType === "Session") {
-            // switch to break
-            setCurrentSessionType("Break")
-            setTimeLeft(breakTime)
-          }
-          else if (currentSessionType === "Break") {
-            setCurrentSessionType("Session")
-            setTimeLeft(sessionTime)
-          }
-      }
-      )}, 100)
-      console.log(newIntervalId);
-      setIntervalId(newIntervalId)
-      setPlayOrStop("Stop")
-    }
 
-  }
+  const startClock = () => {
+    if (intervalId) {
+      // if we are in started mode:
+      // we want to stop the timer
+      // clearInterval
+      clearInterval(intervalId)
+      setStartOrStop("start")
+      setIntervalId(null)
+    } else {
+      // if we are in stopped mode:
+      // decrement timeLeft by one every second (1000 ms)
+      // to do this we'll use setInterval
+      setStartOrStop("stop")
+      const newIntervalId = setInterval(() => {
+        setTimeLeft(prevTimeLeft => {
+          if (prevTimeLeft >= 1) {
+            return prevTimeLeft - 1;
+          }
+          // time left is less than 1
+          audioElement.current.play();
+          // if session:
+          let currentSession = document.getElementById("timer-label").innerHTML
+          if (currentSession === 'Session') {
+            // switch to break
+            setCurrentSessionType('Break');
+            // setTimeLeft to breakLength
+            return breakTime * 60;
+          }
+          // if break:
+          else if (currentSession === 'Break') {
+            // switch to session
+            setCurrentSessionType('Session');
+            // setTimeLeft to sessionLength
+            return sessionTime * 60;
+          }
+        })
+      }, 1000); // TODO: turn back into 1000
+      setIntervalId(newIntervalId);
+    }
+  };
+
   const decrementBreak = () => {
-    setBreakTime(prevValue=>prevValue>=1 ? prevValue-1 :prevValue)
+    setBreakTime(prevValue => prevValue > 1 ? prevValue - 1 : prevValue)
   }
   const incrementBreak = () => {
-    setBreakTime(prevValue => prevValue<=59 ? prevValue +=1 : prevValue )
+    setBreakTime(prevValue => prevValue <= 59 ? prevValue += 1 : prevValue)
   }
   const decrementSession = () => {
-    setSessionTime(prevValue=>prevValue>1 ? prevValue-1 :prevValue)
+    setSessionTime(prevValue => prevValue > 1 ? prevValue - 1 : prevValue)
   }
-  const incrementSession= () => {
-    setSessionTime(prevValue => prevValue<=59 ? prevValue +=1 : prevValue )
-  }  
+  const incrementSession = () => {
+    setSessionTime(prevValue => prevValue <= 59 ? prevValue += 1 : prevValue)
+  }
   const handleReset = () => {
+    // reset the audio
+    audioElement.current.load()
     // clear the timeout interval
-    //set the intervalId null
+
     // set the sessiontype to "Session"
+    setCurrentSessionType("Session")
     setBreakTime(5)
+    clearInterval(intervalId)
+    setIntervalId(null)
     setSessionTime(25)
+    setTimeLeft(60 * 25)
+    setStartOrStop("Start")
   }
 
   return (
     <div className='container my-5'>
       <h2>25+5 Clock</h2>
       <div className="row justify-content-between my-5">
-        <BreakLength 
+        <BreakLength
           breaktime={breakTime}
           decrementBreak={decrementBreak}
           incrementBreak={incrementBreak} />
-        <SessionLength 
+        <SessionLength
           sessionTime={sessionTime}
           decrementSession={decrementSession}
           incrementSession={incrementSession} />
       </div>
       <TimeLeft sessionName={currentSessionType}
-          playOrStop={playOrStop}
-          timeleft={formattedTimeLeft}
-          handleStart={startClock} 
-          handleReset={handleReset}
-          />
+        startOrStop={startOrStop}
+        timeleft={formattedTimeLeft}
+        handleStart={startClock}
+        handleReset={handleReset}
+      />
+      <audio id="beep" ref={audioElement}>
+        <source src="https://onlineclock.net/audio/options/default.mp3" type="audio/mpeg" />
+      </audio>
     </div>
   );
 }
