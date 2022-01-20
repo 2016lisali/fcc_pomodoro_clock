@@ -1,22 +1,22 @@
+import {BsArrowDownCircleFill, BsArrowUpCircleFill} from "react-icons/bs"
+
 function SessionLength({ decrementSession, sessionTime, incrementSession }) {
-  
+
   return (
-    <div className="sessionLength col px-5">
-      <h3 id="session-label">Session Length</h3>
-      <div className="row justify-content-center">
-        <button 
-          className="col-2"
+    <div className="sessionLength">
+      <h2 id="session-label">Session Length</h2>
+      <div className="length-control">
+        <span
           id="session-decrement"
           onClick={decrementSession}>
-          -
-        </button>
-        <p className="col-2" id="session-length">{sessionTime}</p>
-        <button 
-          className="col-2" 
+          <BsArrowDownCircleFill />
+        </span>
+        <p id="session-length">{sessionTime}</p>
+        <span
           id="session-increment"
           onClick={incrementSession}>
-          +
-        </button>
+          <BsArrowUpCircleFill />
+        </span>
       </div>
     </div>
   )

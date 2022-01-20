@@ -1,23 +1,20 @@
-// rafce 
+import {BsArrowDownCircleFill, BsArrowUpCircleFill} from "react-icons/bs"
 const BreakLength = ({
   decrementBreak,
   breaktime,
   incrementBreak
-  }) => {
+}) => {
   return (
-    <div className="breakLength col mx-5">
-      <h3 id="break-label">Break Length</h3>
-      <div className="row justify-content-center">
-        <button className="col-2"
-            id="break-decrement"
-            onClick={decrementBreak}
-        >
-        -
-        </button>
-        <p className="col-2" id="break-length">{breaktime}</p>
-        <button className="col-2" 
-          id="break-increment"
-          onClick={incrementBreak}>+</button>
+    <div className="breakLength">
+      <h2 id="break-label">Break Length</h2>
+      <div className="length-control">
+        <span id="break-decrement" onClick={decrementBreak}>
+          <BsArrowDownCircleFill />
+        </span>
+        <p id="break-length">{breaktime}</p>
+        <span id="break-increment" onClick={incrementBreak}>
+          <BsArrowUpCircleFill />
+        </span>
       </div>
     </div>
   )

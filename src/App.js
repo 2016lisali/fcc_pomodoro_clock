@@ -4,7 +4,8 @@ import SessionLength from "./component/SessionLength"
 import TimeLeft from "./component/TimeLeft"
 import moment from 'moment'
 import momentDurationFormatSetup from 'moment-duration-format';
-import './App.css';
+import './App.scss';
+import { FaPlayCircle, FaStop } from "react-icons/fa"
 
 momentDurationFormatSetup(moment)
 
@@ -14,7 +15,7 @@ function App() {
   const [sessionTime, setSessionTime] = useState(25)
   const [timeLeft, setTimeLeft] = useState(5 * 60)
   const [intervalId, setIntervalId] = useState(null)
-  const [startOrStop, setStartOrStop] = useState("Start")
+  const [startOrStop, setStartOrStop] = useState(<FaPlayCircle />)
   const [currentSessionType, setCurrentSessionType] = useState("Session")
   const formattedTimeLeft = moment.duration(timeLeft, 's').format('mm:ss', { trim: false })
 
@@ -30,13 +31,13 @@ function App() {
       // we want to stop the timer
       // clearInterval
       clearInterval(intervalId)
-      setStartOrStop("start")
+      setStartOrStop(<FaPlayCircle />)
       setIntervalId(null)
     } else {
       // if we are in stopped mode:
       // decrement timeLeft by one every second (1000 ms)
       // to do this we'll use setInterval
-      setStartOrStop("stop")
+      setStartOrStop(<FaStop />)
       const newIntervalId = setInterval(() => {
         setTimeLeft(prevTimeLeft => {
           if (prevTimeLeft >= 1) {
@@ -89,13 +90,13 @@ function App() {
     setIntervalId(null)
     setSessionTime(25)
     setTimeLeft(60 * 25)
-    setStartOrStop("Start")
+    setStartOrStop(<FaPlayCircle />)
   }
 
   return (
-    <div className='container my-5'>
-      <h2>25+5 Clock</h2>
-      <div className="row justify-content-between my-5">
+    <div className='app'>
+      <h1>25+5 Clock</h1>
+      <div className="settings">
         <BreakLength
           breaktime={breakTime}
           decrementBreak={decrementBreak}
