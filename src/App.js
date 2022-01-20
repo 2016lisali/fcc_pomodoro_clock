@@ -5,13 +5,13 @@ import TimeLeft from "./component/TimeLeft"
 import moment from 'moment'
 import momentDurationFormatSetup from 'moment-duration-format';
 import './App.scss';
-import { FaPlayCircle, FaStop } from "react-icons/fa"
+import { FaPlayCircle, FaStopCircle } from "react-icons/fa"
 
 momentDurationFormatSetup(moment)
 
 function App() {
   const audioElement = useRef(null)
-  const [breakTime, setBreakTime] = useState(1)
+  const [breakTime, setBreakTime] = useState(5)
   const [sessionTime, setSessionTime] = useState(25)
   const [timeLeft, setTimeLeft] = useState(5 * 60)
   const [intervalId, setIntervalId] = useState(null)
@@ -37,7 +37,7 @@ function App() {
       // if we are in stopped mode:
       // decrement timeLeft by one every second (1000 ms)
       // to do this we'll use setInterval
-      setStartOrStop(<FaStop />)
+      setStartOrStop(<FaStopCircle />)
       const newIntervalId = setInterval(() => {
         setTimeLeft(prevTimeLeft => {
           if (prevTimeLeft >= 1) {

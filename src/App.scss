@@ -8,8 +8,7 @@ body {
 }
 
 #root {
-  text-align: center;
-  width: 80%;
+  text-align: center;  
 }
 
 .app {
@@ -40,13 +39,14 @@ body {
     }
 
     span {
-      margin-right: 12px;
+      margin-right: 16px;
       cursor: pointer;
       color: black;
       font-size: 20px;
 
       &:hover {
         transform: scale(1.1);
+        opacity: 0.5;
       }
 
       &:active {
